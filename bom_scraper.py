@@ -104,3 +104,4 @@ if '$' in info_list[2] and 'n/a' not in info_list[9]:
 #print(distributor, release, worldwide)
 
 # We've got everything we want EXCEPT for *opening weekend*... 
+# Now we have to clean data AND code.
