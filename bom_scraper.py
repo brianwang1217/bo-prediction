@@ -48,6 +48,59 @@ def write_csv():
 # testing:
 url = "http://www.boxofficemojo.com/movies/?id=starwars7.htm"
 soup = bs4.BeautifulSoup(urlopen(url).read(), 'lxml')
-print(soup)
+#print(soup)
 
+# Gets the table of stats that we want for the linked movie.
+stuff = soup.select_one('div.mp_box table')
 
+# Domestic gross.
+#print(stuff.find('b', text='Domestic:').find_next('td').text)
+# Worldwide gross.
+#print(stuff.find('b', text='Worldwide:').find_next('td').text)
+
+# Director
+director = soup.find_all('a', href = re.compile('Director&id'))
+#print (director[0].encode_contents())
+
+# A lot of important information we want is in bolded text.
+bolded_text = soup.find_all('b')
+
+# Empty list initialized to store all of the data that we want to keep.
+info_list = []
+
+for data in bolded_text:
+	#print (data)
+
+	# Unnecessary information.
+	if 'Domestic Lifetime' not in str(data.encode_contents()):
+		info_list.append(str(data.encode_contents()))
+
+# Make sure this is a domestic release.
+if '$' in info_list[2] and 'n/a' not in info_list[9]:
+	title = info_list[1]
+	domestic = info_list[2]
+
+	# warning: this might be None; if it is not:
+	if 'n/a' not in info_list[3]:
+		distributor = info_list[3].split('>')[1].split('<')[0]
+
+	# sometimes release date is not in hyperlink.
+	if len(info_list[4].split('>')) > 3:
+		release = info_list[4].split('>')[2].split('<')[0]
+	else:
+		release = info_list[4].split('>')[1].split('<')[0]
+
+	genre = info_list[5]
+	runtime = info_list[6]
+	rating = info_list[7]
+	budget = info_list[8]
+
+	# If movie was released worldwide.
+	if 'n/a' not in info_list[13] and '$' in info_list[13]:
+		worldwide = info_list[13]
+	else:
+		worldwide = None
+
+#print(distributor, release, worldwide)
+
+# We've got everything we want EXCEPT for *opening weekend*... 
